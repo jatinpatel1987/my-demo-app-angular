@@ -41,5 +41,5 @@ jobs:
       - name: Deploy to S3
         run: |
           aws s3 sync dist/my-demo-app/browser/ \
-          s3://${{ vars.S3_BUCKET }}/ \
+          s3://angular-demo-app-dev/ \
           --delete
