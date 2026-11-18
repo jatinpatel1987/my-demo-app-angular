@@ -1,0 +1,36 @@
+name: Docker Hub to AWS ECR
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  push-to-ecr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ap-south-1
+
+      - name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Pull Docker Hub Image
+        run: docker pull myusername/myapp:latest
+
+      - name: Tag Docker Image
+        run: |
+          docker tag myusername/myapp:latest \
+          ${{ steps.login-ecr.outputs.registry }}/myapp:latest
+
+      - name: Push Image to ECR
+        run: |
+          docker push \
+          ${{ steps.login-ecr.outputs.registry }}/myapp:latest
