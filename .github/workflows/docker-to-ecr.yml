@@ -15,20 +15,21 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ap-south-1
+          aws-region: ${{ vars.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Login to AWS ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Pull Docker Hub Image
-        run: docker pull myusername/myapp:latest
+        run: docker pull jatinpatel1987/my-angular-app:latest
 
       - name: Tag Docker Image
         run: |
-          docker tag myusername/myapp:latest \
-          ${{ steps.login-ecr.outputs.registry }}/myapp:latest
+          docker tag jatinpatel1987/my-angular-app:latest \
+          ${{ steps.login-ecr.outputs.registry }}/my-angular-app:latest
 
       - name: Push Image to ECR
         run: |
